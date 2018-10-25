@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Quiz-App</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+
+</head>
+<body>
+    <div class="container">
+
+        <h1>QUIZ</h1>
+
+
+        <h3 id="q1"></h3>
+        <select id="my_select1">
+            <option value="0" id="id0" selected>Choose an option</option>
+            <option value="1" id="id1">1</option>
+            <option value="2" id="id2">2</option>
+            <option value="3" id="id3">3</option>
+            <option value="4" id="id4">4</option>
+        </select>
+        <h3 id="q2"></h3>
+        <select id="my_select2">
+            <option value="0" id="id0" selected>Choose an option</option>
+            <option value="1" id="id1">2</option>
+            <option value="2" id="id2">4</option>
+            <option value="3" id="id3">5</option>
+            <option value="4" id="id4">6</option>
+        </select>
+        <h3 id="q3"></h3>
+        <select id="my_select3">
+            <option value="0" id="id0" selected>Choose an option</option>
+            <option value="1" id="id1">3</option>
+            <option value="2" id="id2">5</option>
+            <option value="3" id="id3">6</option>
+            <option value="4" id="id4">7</option>
+        </select>
+        <h3 id="q4"></h3>
+        <select id="my_select4">
+            <option value="0" id="id0" selected>Choose an option</option>
+            <option value="1" id="id1">5</option>
+            <option value="2" id="id2">6</option>
+            <option value="3" id="id3">7</option>
+            <option value="4" id="id4">8</option>
+        </select>
+
+
+        <button id="button" onclick = "submitKey();">Submit</button>
+
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+    <script>
+       // Our future code here..
+       var Web3 = require('web3');
+       console.log(typeof web3);
+       if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            // set the provider you want from Web3.providers
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        }
+        web3.eth.defaultAccount = web3.eth.accounts[0];
+        var quiz = web3.eth.contract([
+    {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "_sol",
+                "type": "uint256[4]"
+            }
+        ],
+        "name": "endQuiz",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [],
+        "name": "getWinners",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [],
+        "name": "joinQuiz",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "_n",
+                "type": "uint256"
+            },
+            {
+                "name": "_jointime",
+                "type": "uint256"
+            },
+            {
+                "name": "_quiztime",
+                "type": "uint256"
+            },
+            {
+                "name": "_fee",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "constant": false,
+        "inputs": [],
+        "name": "withDraw",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "answers",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "numPlayers",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
+            {
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "question1",
+        "outputs": [
+            {
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "question2",
+        "outputs": [
+            {
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "question3",
+        "outputs": [
+            {
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "question4",
+        "outputs": [
+            {
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "quizFee",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "startQuiz",
+        "outputs": [
+            {
+                "name": "",
+                "type": "string"
+            },
+            {
+                "name": "",
+                "type": "string"
+            },
+            {
+                "name": "",
+                "type": "string"
+            },
+            {
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "totPlayers",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    }
+]);
+        var quizapp = quiz.at('0xf7848d08cec01262e7791e203071b793171e12bd');
+        console.log(quizapp);
+        quizapp.startQuiz(function(error, result){
+            if(!error)
+                {
+                    $("#q1").html("Q1) "+result[0]);
+                    $("#q2").html("Q2) "+result[1]);
+                    $("#q3").html("Q3) "+result[2]);
+                    $("#q4").html("Q4) "+result[3]);
+                    console.log(result);
+                }
+            else
+                console.error(error);
+        });
+        function submitKey(){
+        var s1 = $('#my_select1').find(":selected").val();
+        var s2 = $('#my_select2').find(":selected").val();
+        var s3 = $('#my_select3').find(":selected").val();
+        var s4 = $('#my_select4').find(":selected").val();
+        console.log(s1 + s2 + s3+ s4);
+        // quizapp.endQuiz([s1,s2,s3,s4]).getData();
+        var setNumbers = [s1,s2,s3,s4];
+        var setData = quizapp.endQuiz.getData(setNumbers);
+        }
+
+
+        web3.eth.getCoinbase(function(err, account) {
+        if (err === null) {
+            console.log(account);
+      }
+    });
+    </script>
+
+</body>
+</html>
