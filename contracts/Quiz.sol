@@ -24,6 +24,7 @@ contract Quiz {
   mapping (address => uint) pendingAmount;
   mapping (uint => Player) Players;
   mapping (address => uint) playerIndex;
+  event Collected(address sender,uint amount);
   
   constructor(uint _n,uint _jointime,uint _quiztime,uint _fee) public {
       owner = msg.sender;
@@ -31,10 +32,10 @@ contract Quiz {
       quizFee = _fee;
       endJoinTime = now + _jointime;
       endQuiztime = endJoinTime + _quiztime;
-      question1 = "1+1 ?";
-      question2 = "2+2 ?";
-      question3 = "3+3 ?";
-      question4 = "4+4 ?";
+      question1 = "What is a blockchain?";
+      question2 = "What is UTXO?";
+      question3 = "Who created Bitcoin?";
+      question4 = "What does P2P stand for?";
       answers[0] = 1;
       answers[1] = 2;
       answers[2] = 3;
@@ -48,7 +49,7 @@ contract Quiz {
   function joinQuiz() public payable {
     require(numPlayers < totPlayers,"Player limit exceeded");
     require(msg.value >= quizFee,"Insufficient fee");
-    require (now < endJoinTime,"Time up for joining quiz");
+    //require (now < endJoinTime,"Time up for joining quiz");
     numPlayers++;
     playerIndex[msg.sender] = numPlayers;
     Players[numPlayers].account = msg.sender;
@@ -69,7 +70,7 @@ contract Quiz {
     Players[playerIndex[msg.sender]].timestamp = now;    
   }
   
-  function getWinners() public onlyOwner{
+  function getWinners() public onlyOwner payable {
     //require (now > endQuiztime);
     uint winner = 0;
     uint i;
@@ -87,22 +88,17 @@ contract Quiz {
        }
     }
     //transfer remaining pending balance to them
-    // for( i=1;i<=numPlayers;i++){
-    //   uint amount = pendingAmount[Players[i].account];
-    //   if(amount > 0){
-    //     pendingAmount[Players[i].account] = 0;
-    //     Players[i].account.transfer(amount);
-    //   }
-    // }
-
-
-  }
-  function withDraw () public {
-      uint amount = pendingAmount[msg.sender];
+    for( i=1;i<=numPlayers;i++){
+      uint amount = pendingAmount[Players[i].account];
       if(amount > 0){
-        pendingAmount[msg.sender] = 0;
-        msg.sender.transfer(amount);
+        pendingAmount[Players[i].account] = 0;
+        Players[i].account.transfer(amount);
+        Collected(Players[i].account,amount);
       }
+    }
+    selfdestruct(owner);
+
+
   }
   
   

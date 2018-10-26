@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ganache-cli": "^6.1.0-beta.4",
+    "geth": "^0.4.0",
     "web3": "^0.20.6",
     "webpack": "^4.22.0"
   }
