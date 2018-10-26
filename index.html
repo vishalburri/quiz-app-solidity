@@ -12,7 +12,19 @@
 
 </head>
 <body>
-    <div class="container">
+    <div id = "joinhide">
+    <h3>Name</h3>  <input type="text" id="name"><br>
+    <h3>Public Key</h3>  <input type="text" id="pkey"><br>
+    <h3>Fee</h3><input type="text" id="pfee">
+    <button id="joinquiz" onclick = "submitJoin();">Register</button>
+    </div>
+
+    <div id = "registered">
+    <h3>Successfully Registered for the Quiz</h3> 
+    <button id="startquiz" onclick = "quizStart();">Start Quiz</button>
+    </div>
+
+    <div id="formhide">
 
         <h1>QUIZ</h1>
 
@@ -163,6 +175,25 @@
     },
     {
         "constant": true,
+        "inputs": [
+            {
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "isValid",
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
         "inputs": [],
         "name": "numPlayers",
         "outputs": [
@@ -300,37 +331,82 @@
         "type": "function"
     }
 ]);
-        var quizapp = quiz.at('0x8b15cdb7098c5efa4c14db081b72483b4512b239');
+        var quizapp = quiz.at('0xe904744b043a8f4282378b1d84cbf73db5db0f5d');
         console.log(quizapp);
-        quizapp.startQuiz(function(error, result){
-            if(!error)
+        $("#formhide").hide();
+        $("#registered").hide();
+        function validkey()
+        {
+            var key = document.getElementById("pkey").value;
+            var valid;
+            quizapp.isValid.call(key,function(err,res)
                 {
-                    $("#q1").html("Q1) "+result[0]);
-                    $("#q2").html("Q2) "+result[1]);
-                    $("#q3").html("Q3) "+result[2]);
-                    $("#q4").html("Q4) "+result[3]);
-                    console.log(result);
-                }
+                    valid = res;
+                });
+            console.log(key);
+            for(var i=0;i<10;i++)
+            {
+                if(web3.eth.accounts[i]===key && !valid ){return true;}
+            }
+            return false;
+        }
+        // setTimeout(function() {
+        // $('#formhide').show();
+        // }, 5000);
+        function submitJoin(){
+            if(validkey()){
+                var key = document.getElementById("pkey").value;
+                var fee = document.getElementById("pfee").value;
+                var name = document.getElementById("name").value;
+
+                quizapp.joinQuiz({from:key,gas: 3000000,value:web3.toWei(fee, "wei")},function(error){
+                    if(!error )
+                        {
+                            $('#joinhide').hide();
+                            $('#registered').show();
+                            // call other function;
+                        }
+                    else{
+                        console.error(error);
+                    } 
+                });
+            }
             else
-                console.error(error);
-        });
+                console.log('Invalid address');
+       }
+       function quizStart(){
+            quizapp.startQuiz(function(error, result){
+                if(!error)
+                    {
+                        $('#registered').hide();
+                        $('#formhide').show();
+                        $("#q1").html("Q1) "+result[0]);
+                        $("#q2").html("Q2) "+result[1]);
+                        $("#q3").html("Q3) "+result[2]);
+                        $("#q4").html("Q4) "+result[3]);
+                        console.log(result);
+                    }
+                else{
+                    console.error(error);
+                }
+            });
+        }
         function submitKey(){
-        var s1 = $('#my_select1').find(":selected").val();
-        var s2 = $('#my_select2').find(":selected").val();
-        var s3 = $('#my_select3').find(":selected").val();
-        var s4 = $('#my_select4').find(":selected").val();
-        console.log(s1 + s2 + s3+ s4);
-        // quizapp.endQuiz([s1,s2,s3,s4]).getData();
-        var setNumbers = [s1,s2,s3,s4];
-        var setData = quizapp.endQuiz.getData(setNumbers);
+            var s1 = $('#my_select1').find(":selected").val();
+            var s2 = $('#my_select2').find(":selected").val();
+            var s3 = $('#my_select3').find(":selected").val();
+            var s4 = $('#my_select4').find(":selected").val();
+            console.log(s1 + s2 + s3+ s4);
+            // quizapp.endQuiz([s1,s2,s3,s4]).getData();
+            var setNumbers = [s1,s2,s3,s4];
+            var setData = quizapp.endQuiz.getData(setNumbers);
+            $('#formhide').hide();
         }
-
-
-        web3.eth.getCoinbase(function(err, account) {
-        if (err === null) {
-            console.log(account);
-        }
-    });
+    //     web3.eth.getCoinbase(function(err, account) {
+    //     if (err === null) {
+    //         console.log(account);
+    //     }
+    // });
     </script>
 
 </body>

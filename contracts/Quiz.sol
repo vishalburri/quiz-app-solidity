@@ -24,6 +24,8 @@ contract Quiz {
   mapping (address => uint) pendingAmount;
   mapping (uint => Player) Players;
   mapping (address => uint) playerIndex;
+  mapping (address => bool) public isValid;
+  
   event Collected(address sender,uint amount);
   
   constructor(uint _n,uint _jointime,uint _quiztime,uint _fee) public {
@@ -49,9 +51,12 @@ contract Quiz {
   function joinQuiz() public payable {
     require(numPlayers < totPlayers,"Player limit exceeded");
     require(msg.value >= quizFee,"Insufficient fee");
+    require (isValid[msg.sender]==false);
+    
     //require (now < endJoinTime,"Time up for joining quiz");
     numPlayers++;
     playerIndex[msg.sender] = numPlayers;
+    isValid[msg.sender]=true;
     Players[numPlayers].account = msg.sender;
     pendingAmount[msg.sender] = msg.value - quizFee;
   }
