@@ -15,7 +15,6 @@
     <div id = "joinhide">
     <h3>Name</h3>  <input type="text" id="name"><br>
     <h3>Public Key</h3>  <input type="text" id="pkey"><br>
-    <h3>Fee</h3><input type="text" id="pfee">
     <button id="joinquiz" onclick = "submitJoin();">Register</button>
     </div>
 
@@ -83,76 +82,18 @@
         web3.eth.defaultAccount = web3.eth.accounts[0];
         var quiz = web3.eth.contract([
     {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "name": "sender",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "Collected",
-        "type": "event"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_sol",
-                "type": "uint256[4]"
-            }
-        ],
-        "name": "endQuiz",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "constant": false,
+        "constant": true,
         "inputs": [],
-        "name": "getWinners",
-        "outputs": [],
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [],
-        "name": "joinQuiz",
-        "outputs": [],
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
+        "name": "question1",
+        "outputs": [
             {
-                "name": "_n",
-                "type": "uint256"
-            },
-            {
-                "name": "_jointime",
-                "type": "uint256"
-            },
-            {
-                "name": "_quiztime",
-                "type": "uint256"
-            },
-            {
-                "name": "_fee",
-                "type": "uint256"
+                "name": "",
+                "type": "string"
             }
         ],
         "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "constructor"
+        "stateMutability": "view",
+        "type": "function"
     },
     {
         "constant": true,
@@ -167,67 +108,6 @@
             {
                 "name": "",
                 "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [
-            {
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "name": "isValid",
-        "outputs": [
-            {
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "numPlayers",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-            {
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "question1",
-        "outputs": [
-            {
-                "name": "",
-                "type": "string"
             }
         ],
         "payable": false,
@@ -265,11 +145,11 @@
     {
         "constant": true,
         "inputs": [],
-        "name": "question4",
+        "name": "quizFee",
         "outputs": [
             {
                 "name": "",
-                "type": "string"
+                "type": "uint256"
             }
         ],
         "payable": false,
@@ -279,7 +159,7 @@
     {
         "constant": true,
         "inputs": [],
-        "name": "quizFee",
+        "name": "totPlayers",
         "outputs": [
             {
                 "name": "",
@@ -317,9 +197,56 @@
         "type": "function"
     },
     {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "_sol",
+                "type": "uint256[4]"
+            }
+        ],
+        "name": "endQuiz",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [
+            {
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "isValid",
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "constant": true,
         "inputs": [],
-        "name": "totPlayers",
+        "name": "owner",
+        "outputs": [
+            {
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "numPlayers",
         "outputs": [
             {
                 "name": "",
@@ -329,12 +256,130 @@
         "payable": false,
         "stateMutability": "view",
         "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [],
+        "name": "joinQuiz",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [],
+        "name": "getWinners",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "question4",
+        "outputs": [
+            {
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "_n",
+                "type": "uint256"
+            },
+            {
+                "name": "_jointime",
+                "type": "uint256"
+            },
+            {
+                "name": "_quiztime",
+                "type": "uint256"
+            },
+            {
+                "name": "_fee",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "name": "sender",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "Collected",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "name": "index",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "Balance",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "name": "numPlayers",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "name": "winner",
+                "type": "uint256"
+            }
+        ],
+        "name": "Test",
+        "type": "event"
     }
 ]);
-        var quizapp = quiz.at('0xe904744b043a8f4282378b1d84cbf73db5db0f5d');
+var contractAddress = '0xb43b5eca8de1ce15e3f5cd71c62ba564e192aa86';
+        var quizapp = quiz.at(contractAddress);
         console.log(quizapp);
         $("#formhide").hide();
         $("#registered").hide();
+        var myVar = setInterval(function(){
+         /// call your function here
+         quizapp.startQuiz(function(error, result){
+                if(!error)
+                    {
+                        clearInterval(myVar);
+                        alert('Quiz started');
+                    }
+            });
+        }, 100);
+
         function validkey()
         {
             var key = document.getElementById("pkey").value;
@@ -354,12 +399,17 @@
         // $('#formhide').show();
         // }, 5000);
         function submitJoin(){
+            var fee;
+            quizapp.quizFee.call(function(err,res)
+                {
+                    fee = res.toNumber();
+                    console.log(fee);
+                });
             if(validkey()){
                 var key = document.getElementById("pkey").value;
-                var fee = document.getElementById("pfee").value;
                 var name = document.getElementById("name").value;
-
-                quizapp.joinQuiz({from:key,gas: 3000000,value:web3.toWei(fee, "wei")},function(error){
+                
+                quizapp.joinQuiz({from:key,gas:3000000,value:web3.toWei(fee, "wei")},function(error){
                     if(!error )
                         {
                             $('#joinhide').hide();
@@ -387,6 +437,7 @@
                         console.log(result);
                     }
                 else{
+                    alert('Cannot start now');
                     console.error(error);
                 }
             });
@@ -397,16 +448,40 @@
             var s3 = $('#my_select3').find(":selected").val();
             var s4 = $('#my_select4').find(":selected").val();
             console.log(s1 + s2 + s3+ s4);
-            // quizapp.endQuiz([s1,s2,s3,s4]).getData();
+            // var setdata = quizapp.endQuiz([s1,s2,s3,s4]).getData();
+            var key = document.getElementById("pkey").value;
+            console.log(key);
+            //quizapp.endQuiz([s1,s2,s3,s4],{from:key,gas:400000000},function(error, result){});
             var setNumbers = [s1,s2,s3,s4];
             var setData = quizapp.endQuiz.getData(setNumbers);
+            console.log(setData);
+            var gasEstimate = web3.eth.estimateGas({
+                from: key,
+                to: contractAddress,
+                data: setData
+            });
+            var gasPrice = web3.eth.gasPrice;
+            console.log('gas Price: ' + gasPrice);
+            const transaction = {
+              from: key,
+              to:contractAddress,
+              value: '0x00',
+              gas: gasEstimate + 1,
+              gasPrice: gasPrice + 1,
+              data: setData
+            }
+            web3.eth.sendTransaction( transaction, function(err, txHash) {
+              if (err != null) {
+                     console.error("Error while sending transaction: " + err);
+                   }
+                   else{
+                     console.log("Transaction Sent here's you  txHash: " + txHash);
+                   }
+            });
+            //web3.eth.sendTransaction({to:contractAddress, from:key,gas:3000000, data: setdata});
             $('#formhide').hide();
         }
-    //     web3.eth.getCoinbase(function(err, account) {
-    //     if (err === null) {
-    //         console.log(account);
-    //     }
-    // });
+    
     </script>
 
 </body>
