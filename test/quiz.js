@@ -1,7 +1,7 @@
 var Quiz = artifacts.require("Quiz");
 
-// Helps is asserting events
-// const truffleAssert = require("truffle-assertions");
+// Helps in asserting events
+const truffleAssert = require("truffle-assertions");
 
 contract("Quiz", accounts => {
 	const owner = accounts[0];
@@ -44,7 +44,7 @@ contract("Quiz", accounts => {
 		let instance;
 
 		beforeEach(async () => {
-			instance = await Quiz.new(5,10,60,10, { from: owner });
+			instance = await Quiz.new(5,5,5,10, { from: owner });
 		});
 
 		describe("Success Case", () => {
@@ -124,7 +124,7 @@ contract("Quiz", accounts => {
 		describe("Fail Case", () => {
 			it("Time up for registering quiz", async () => {
 				const delay = ms => new Promise(res => setTimeout(res, ms));
-				await delay(11*1000);
+				await delay(6*1000);
 				try {
 						await instance.joinQuiz({
 							from: accounts[1],value : web3.toWei(10, "wei")
@@ -137,6 +137,97 @@ contract("Quiz", accounts => {
 				}
 			});
 		});
-
 	});
+	describe("Submit Quiz", () => {
+		let instance;
+
+		beforeEach(async () => {
+			instance = await Quiz.new(5,5,5,10, { from: owner });
+			await instance.joinQuiz({
+					from: accounts[1],value : web3.toWei(10, "wei")
+				});
+		});
+
+		describe("Success Case", () => {
+			it("Quiz submitted", async () => {
+				const delay = ms => new Promise(res => setTimeout(res, ms));
+				await delay(6*1000);
+				await instance.endQuiz([1,2,3,4],{
+					from: accounts[1]
+				});
+				// truffleAssert.eventEmitted(result, "event name");
+			});
+		});	
+		describe("Fail Case", () => {
+			it("Time up for submitting quiz", async () => {
+				const delay = ms => new Promise(res => setTimeout(res, ms));
+				await delay(10*1000);
+				try {
+						await instance.endQuiz([1,2,3,4],{
+							from: accounts[1]
+						});
+					} catch (err) {
+					assert.equal(
+						err.message,
+						"VM Exception while processing transaction: revert"
+					);		
+				}
+			});
+		});
+	});	
+	describe("Get winners", () => {
+		let instance;
+
+		beforeEach(async () => {
+			instance = await Quiz.new(5,5,5,10, { from: owner });
+			await instance.joinQuiz({
+					from: accounts[1],value : web3.toWei(10, "wei")
+				});
+			await instance.joinQuiz({
+					from: accounts[2],value : web3.toWei(10, "wei")
+				});
+			 const delay = ms => new Promise(res => setTimeout(res, ms));
+			 await delay(6*1000);
+			 await instance.endQuiz([1,2,4,3],{
+					from: accounts[1]
+				});
+			 await instance.endQuiz([2,1,3,4],{
+					from: accounts[2]
+				});
+		});
+
+		describe("Success Case", () => {
+			it("winner determined from owner", async () => {
+			 	
+			 	const delay = ms => new Promise(res => setTimeout(res, ms));
+				await delay(5*1000);
+
+				let tx = await instance.getWinners({
+					from: owner
+				});
+				truffleAssert.eventEmitted(tx,'Collected', (ev) => {
+				    return ev.sender == accounts[1] && ev.amount == 6;
+				 });
+				truffleAssert.eventEmitted(tx,'Collected', (ev) => {
+				    return ev.sender == accounts[2] && ev.amount == 6;
+				 });
+			});
+		});
+		describe("Fail Case", () => {
+			it("owner should determine winners", async () => {
+				const delay = ms => new Promise(res => setTimeout(res, ms));
+				await delay(5*1000);
+				try {
+					await instance.getWinners({
+					from: accounts[1]
+					});
+				} catch (err) {
+					assert.equal(
+						err.message,
+						"VM Exception while processing transaction: revert"
+					);		
+				}
+			});
+		});	
+	});	
 });

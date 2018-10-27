@@ -98,10 +98,11 @@ contract Quiz {
     //transfer remaining pending balance to them
     for( i=1;i<=numPlayers;i++){
       uint amount = pendingAmount[Players[i].account];
+        emit Collected(Players[i].account,amount);
+      
       if(amount > 0){
         pendingAmount[Players[i].account] = 0;
         Players[i].account.transfer(amount);
-        emit Collected(Players[i].account,amount);
       }
     }
     // send contract balance to owner;
