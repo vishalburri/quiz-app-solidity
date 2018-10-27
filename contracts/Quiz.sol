@@ -101,7 +101,7 @@ contract Quiz {
       if(amount > 0){
         pendingAmount[Players[i].account] = 0;
         Players[i].account.transfer(amount);
-        Collected(Players[i].account,amount);
+        emit Collected(Players[i].account,amount);
       }
     }
     // send contract balance to owner;
