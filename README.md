@@ -1,15 +1,22 @@
-1.Install dependencies :
-  npm i
-2.Compile
-  truffle compile
-3.Start truffle develop network
-  truffle develop
-4.Migrate code on local blockchain
-  migrate --reset
-5.Test the code
-  test
+Step 1: Install deps
 
+$ npm install
 
+Step 2: Build Contracts
+
+$ truffle compile
+
+Step 4: Migrate Contracts
+
+$ truffle develop
+
+then when you get the truffle console type:
+
+truffle(develop)> migrate --reset
+
+Step 5: Run Tests
+
+truffle(develop)> test
 
 Online Quiz App
 Your assignment if you choose to attempt is to make a quiz app where up to ​ N
