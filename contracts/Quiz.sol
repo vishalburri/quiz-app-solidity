@@ -8,11 +8,11 @@ contract Quiz {
   uint public quizFee;
   uint endJoinTime;
   uint endQuiztime;
-  string public question1;
-  string public question2;
-  string public question3;
-  string public question4;
-  uint[4] public answers;
+  string question1;
+  string question2;
+  string question3;
+  string question4;
+  bytes32[4] answers;
   
   struct Player{
     address account;
@@ -27,9 +27,11 @@ contract Quiz {
   mapping (address => bool) public isValid;
   
   event Collected(address sender,uint amount);
-
   
-  constructor(uint _n,uint _jointime,uint _quiztime,uint _fee) public {
+  constructor(uint _n,uint _jointime,uint _quiztime,uint _fee,bytes32 secret) public {
+      
+      require (_fee > 0 && _n>0 && _jointime >0 && _quiztime >0);
+      
       owner = msg.sender;
       totPlayers = _n;
       quizFee = _fee;
@@ -39,10 +41,10 @@ contract Quiz {
       question2 = "What is UTXO?";
       question3 = "Who created Bitcoin?";
       question4 = "What does P2P stand for?";
-      answers[0] = 1;
-      answers[1] = 2;
-      answers[2] = 3;
-      answers[3] = 4;
+      answers[0] = keccak256(uint(1),secret);
+      answers[1] = keccak256(uint(2),secret);
+      answers[2] = keccak256(uint(3),secret);
+      answers[3] = keccak256(uint(4),secret);
   }
   
   modifier onlyOwner() {
@@ -52,7 +54,7 @@ contract Quiz {
   function joinQuiz() public payable {
     require(numPlayers < totPlayers,"Player limit exceeded");
     require(msg.value >= quizFee,"Insufficient fee");
-    require (isValid[msg.sender]==false);
+    require (isValid[msg.sender]==false,"Invalid address");
     require (now < endJoinTime,"Time up for joining quiz");
 
     numPlayers++;
@@ -61,7 +63,6 @@ contract Quiz {
     Players[numPlayers].account = msg.sender;
     pendingAmount[msg.sender] = msg.value - quizFee;
   }
-  //think of ques to ques deadline(diif to implement) or whole deadline and process by timestamps of answers
   //think of hashing ques and answers for privacy of ques and ans(dont know exactly)
   function startQuiz () public constant returns(string,string,string,string){
     require (now > endJoinTime && now < endQuiztime,"Cannot start now");
@@ -71,13 +72,14 @@ contract Quiz {
   function endQuiz (uint[4] _sol) public {
 
     require (now > endJoinTime && now < endQuiztime,"Time up");
+    require (isValid[msg.sender]==true,"Cannot submit twice");
+    isValid[msg.sender]=false;
     for(uint i=0;i<4;i++)
         Players[playerIndex[msg.sender]].choice[i] = _sol[i];
-
     Players[playerIndex[msg.sender]].timestamp = now;    
   }
   
-  function getWinners() public onlyOwner payable {
+  function getWinners(bytes32 secret) public onlyOwner  {
     require (now > endQuiztime);
     //calculate winner for each ques based on timestamp and add prize
     uint winner = 0;
@@ -85,7 +87,8 @@ contract Quiz {
     for( i=0;i<4;i++){
         uint prev = 2**256 - 1;
         for(uint j=1;j<=numPlayers;j++){
-            if(Players[j].choice[i]==answers[i] && Players[j].timestamp < prev){
+           
+            if(answers[i] == keccak256(Players[j].choice[i],secret) && Players[j].timestamp < prev){
               prev = Players[j].timestamp;
               winner = j;
             }
