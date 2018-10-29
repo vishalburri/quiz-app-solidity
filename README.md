@@ -1,3 +1,16 @@
+1.Install dependencies :
+  npm i
+2.Compile
+  truffle compile
+3.Start truffle develop network
+  truffle develop
+4.Migrate code on local blockchain
+  migrate --reset
+5.Test the code
+  test
+
+
+
 Online Quiz App
 Your assignment if you choose to attempt is to make a quiz app where up to ​ N
 number of people can participate in a single game of 4 questions.
