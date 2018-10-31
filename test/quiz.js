@@ -5,10 +5,12 @@ const truffleAssert = require("truffle-assertions");
 
 contract("Quiz", accounts => {
 	const owner = accounts[0];
+	const secret = "0x285714a264559271d4d0476417a4147c560679e9221b296fa6a74041e10b9792";
+	const key = [1,2,3,4];
 	describe("constructor", () => {
 		describe("Assert Contract is deployed", () => {
 			it("should deploy this contract", async () => {
-				const instance = await Quiz.new(5,60,60,10, { from: owner });
+				const instance = await Quiz.new(5,60,60,10,secret,key, { from: owner });
 
 				let tot = await instance.totPlayers.call();
 				let fee = await instance.quizFee.call();
@@ -17,18 +19,13 @@ contract("Quiz", accounts => {
 				assert.equal(tot.toNumber(), 5);
 				assert.equal(fee.toNumber(), 10);
 
-				// let result = await truffleAssert.createTransactionResult(
-				// 	instance,
-				// 	instance.transactionHash
-				// );
-
-				// truffleAssert.eventEmitted(result, "AuctionStarted");
+				
 			});
 		});
 		describe("Fail case", () => {
 			it("should revert on invalid from address", async () => {
 				try {
-					const instance = await Quiz.new(5,60,60,10, {
+					const instance = await Quiz.new(5,60,60,10,secret,key, {
 						from: "lol"
 					});
 					assert.fail(
@@ -44,7 +41,7 @@ contract("Quiz", accounts => {
 		let instance;
 
 		beforeEach(async () => {
-			instance = await Quiz.new(5,5,5,10, { from: owner });
+			instance = await Quiz.new(5,5,5,10,secret,key, { from: owner });
 		});
 
 		describe("Success Case", () => {
@@ -142,7 +139,7 @@ contract("Quiz", accounts => {
 		let instance;
 
 		beforeEach(async () => {
-			instance = await Quiz.new(5,5,5,10, { from: owner });
+			instance = await Quiz.new(5,5,5,10,secret,key, { from: owner });
 			await instance.joinQuiz({
 					from: accounts[1],value : web3.toWei(10, "wei")
 				});
@@ -152,6 +149,7 @@ contract("Quiz", accounts => {
 			it("Quiz submitted", async () => {
 				const delay = ms => new Promise(res => setTimeout(res, ms));
 				await delay(6*1000);
+				let ques = await instance.startQuiz({from:accounts[1]});
 				await instance.endQuiz([1,2,3,4],{
 					from: accounts[1]
 				});
@@ -161,7 +159,9 @@ contract("Quiz", accounts => {
 		describe("Fail Case", () => {
 			it("Time up for submitting quiz", async () => {
 				const delay = ms => new Promise(res => setTimeout(res, ms));
-				await delay(10*1000);
+				await delay(6*1000);
+				let ques = await instance.startQuiz({from:accounts[1]});
+				await delay(5*1000);
 				try {
 						await instance.endQuiz([1,2,3,4],{
 							from: accounts[1]
@@ -179,7 +179,7 @@ contract("Quiz", accounts => {
 		let instance;
 
 		beforeEach(async () => {
-			instance = await Quiz.new(5,5,5,10, { from: owner });
+			instance = await Quiz.new(5,5,5,10,secret,key, { from: owner });
 			await instance.joinQuiz({
 					from: accounts[1],value : web3.toWei(10, "wei")
 				});
@@ -188,6 +188,7 @@ contract("Quiz", accounts => {
 				});
 			 const delay = ms => new Promise(res => setTimeout(res, ms));
 			 await delay(6*1000);
+			let ques = await instance.startQuiz({from:accounts[1]});
 			 await instance.endQuiz([1,2,4,3],{
 					from: accounts[1]
 				});
@@ -202,7 +203,7 @@ contract("Quiz", accounts => {
 			 	const delay = ms => new Promise(res => setTimeout(res, ms));
 				await delay(5*1000);
 
-				let tx = await instance.getWinners({
+				let tx = await instance.getWinners(secret,{
 					from: owner
 				});
 				truffleAssert.eventEmitted(tx,'Collected', (ev) => {
@@ -218,7 +219,7 @@ contract("Quiz", accounts => {
 				const delay = ms => new Promise(res => setTimeout(res, ms));
 				await delay(5*1000);
 				try {
-					await instance.getWinners({
+					await instance.getWinners(secret,{
 					from: accounts[1]
 					});
 				} catch (err) {

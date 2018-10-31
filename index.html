@@ -84,67 +84,6 @@
     {
         "constant": true,
         "inputs": [],
-        "name": "question1",
-        "outputs": [
-            {
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "answers",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "question2",
-        "outputs": [
-            {
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "question3",
-        "outputs": [
-            {
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
         "name": "quizFee",
         "outputs": [
             {
@@ -168,6 +107,20 @@
         ],
         "payable": false,
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "secret",
+                "type": "bytes32"
+            }
+        ],
+        "name": "getWinners",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -267,29 +220,6 @@
         "type": "function"
     },
     {
-        "constant": false,
-        "inputs": [],
-        "name": "getWinners",
-        "outputs": [],
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "question4",
-        "outputs": [
-            {
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
         "inputs": [
             {
                 "name": "_n",
@@ -306,6 +236,14 @@
             {
                 "name": "_fee",
                 "type": "uint256"
+            },
+            {
+                "name": "secret",
+                "type": "bytes32"
+            },
+            {
+                "name": "_key",
+                "type": "uint256[4]"
             }
         ],
         "payable": false,
@@ -330,7 +268,7 @@
         "type": "event"
     }
 ]);
-var contractAddress = '0xc1e145d869c6fe49f233acb3fc4ddbe30342c782';
+var contractAddress = '0x2a5dd427dffbfaabe6ab1a21811a75a36751c940';
         var quizapp = quiz.at(contractAddress);
         console.log(quizapp);
         $("#formhide").hide();
