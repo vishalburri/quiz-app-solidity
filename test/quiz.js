@@ -135,6 +135,102 @@ contract("Quiz", accounts => {
 			});
 		});
 	});
+	describe("Start Quiz", () => {
+		let instance;
+
+		beforeEach(async () => {
+			instance = await Quiz.new(5,3,3,3,10,secret, { from: owner });
+			await instance.joinQuiz({
+					from: accounts[1],value : web3.toWei(10, "wei")
+				});
+		});
+
+		describe("Success Case", () => {
+			it("Quiz started", async () => {
+				const delay = ms => new Promise(res => setTimeout(res, ms));
+				await delay(4*1000);
+				await instance.revealQuestions([1,2,3,4],{from:owner});
+				await delay(3*1000);
+				let ques = await instance.startQuiz({from:accounts[1]});
+			});
+		});	
+		describe("Fail Case", () => {
+			it("Questions not revealed cannot start quiz", async () => {
+				const delay = ms => new Promise(res => setTimeout(res, ms));
+				await delay(7*1000);
+				try {
+				let ques = await instance.startQuiz({from:accounts[1]});
+					} catch (err) {
+					assert.equal(
+						err.message,
+						"VM Exception while processing transaction: revert"
+					);		
+				}
+			});
+		});
+		describe("Fail Case", () => {
+			it("Cannot start quiz after quiz ends", async () => {
+				const delay = ms => new Promise(res => setTimeout(res, ms));
+				await delay(4*1000);
+				await instance.revealQuestions([1,2,3,4],{from:owner});
+				await delay(6*1000);
+				try {
+				let ques = await instance.startQuiz({from:accounts[1]});
+					} catch (err) {
+					assert.equal(
+						err.message,
+						"VM Exception while processing transaction: revert"
+					);		
+				}
+			});
+		});
+
+	});
+	describe("Questions not revealed", () => {
+		let instance;
+
+		beforeEach(async () => {
+			instance = await Quiz.new(5,3,3,3,10,secret, { from: owner });
+			await instance.joinQuiz({
+					from: accounts[1],value : web3.toWei(10, "wei")
+				});
+			const delay = ms => new Promise(res => setTimeout(res, ms));
+			await delay(7*1000);
+		});
+
+		describe("Success Case", () => {
+			it("User withdraws his amount", async () => {
+				await instance.withdraw({from:accounts[1]});
+			});
+		});	
+		describe("Fail Case", () => {
+			it("User Cannot withdraw from fake account", async () => {
+				try {
+				await instance.withdraw({from:accounts[3]});
+					} catch (err) {
+					assert.equal(
+						err.message,
+						"VM Exception while processing transaction: revert"
+					);		
+				}
+			});
+		});
+		describe("Fail Case", () => {
+			it("User Cannot withdraw twice", async () => {
+				await instance.withdraw({from:accounts[1]});
+				try {
+				await instance.withdraw({from:accounts[1]});
+					} catch (err) {
+					assert.equal(
+						err.message,
+						"VM Exception while processing transaction: revert"
+					);		
+				}
+			});
+		});
+		
+		
+	});
 	describe("Submit Quiz", () => {
 		let instance;
 

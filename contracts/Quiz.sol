@@ -51,6 +51,8 @@ contract Quiz {
     require(msg.value >= quizFee,"Insufficient fee");
     require (isValid[msg.sender]==false,"Invalid address");
     require (now < endJoinTime,"Time up for joining quiz");
+    require (msg.sender!=owner,"owner cannot join quiz");
+    
 
     numPlayers++;
     playerIndex[msg.sender] = numPlayers;
