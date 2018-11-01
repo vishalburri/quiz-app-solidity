@@ -13,11 +13,11 @@ contract Quiz {
   string question3;
   string question4;
   bytes32[4] answers;
+  bytes32 secret;
   
   struct Player{
     address account;
     uint[4] choice;
-    uint prize;
     uint timestamp;
   }
   
@@ -28,13 +28,14 @@ contract Quiz {
   
   event Collected(address sender,uint amount);
   
-  constructor(uint _n,uint _jointime,uint _quiztime,uint _fee,bytes32 secret,uint[4] _key) public {
+  constructor(uint _n,uint _jointime,uint _quiztime,uint _fee,bytes32 _secret,uint[4] _key) public {
       
       require (_fee > 0 && _n>0 && _jointime >0 && _quiztime >0,"invalid inputs to deploy");
       
       owner = msg.sender;
       totPlayers = _n;
       quizFee = _fee;
+      secret = _secret;
       endJoinTime = now + _jointime;
       endQuiztime = endJoinTime + _quiztime;
       //can send questions as arguments
@@ -84,7 +85,7 @@ contract Quiz {
     Players[playerIndex[msg.sender]].timestamp = now;    
   }
   
-  function getWinners(bytes32 secret) public onlyOwner  {
+  function getWinners() public onlyOwner  {
     require (now > endQuiztime,'Quiz did not end ');
     //calculate winner for each ques based on timestamp and add prize
     uint winner = 0;

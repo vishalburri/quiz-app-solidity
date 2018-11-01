@@ -203,7 +203,7 @@ contract("Quiz", accounts => {
 			 	const delay = ms => new Promise(res => setTimeout(res, ms));
 				await delay(5*1000);
 
-				let tx = await instance.getWinners(secret,{
+				let tx = await instance.getWinners({
 					from: owner
 				});
 				truffleAssert.eventEmitted(tx,'Collected', (ev) => {
@@ -219,7 +219,7 @@ contract("Quiz", accounts => {
 				const delay = ms => new Promise(res => setTimeout(res, ms));
 				await delay(5*1000);
 				try {
-					await instance.getWinners(secret,{
+					await instance.getWinners({
 					from: accounts[1]
 					});
 				} catch (err) {
