@@ -10,7 +10,7 @@ contract("Quiz", accounts => {
 	describe("constructor", () => {
 		describe("Assert Contract is deployed", () => {
 			it("should deploy this contract", async () => {
-				const instance = await Quiz.new(5,60,60,10,secret,key, { from: owner });
+				const instance = await Quiz.new(5,60,60,60,10,secret,{ from: owner });
 
 				let tot = await instance.totPlayers.call();
 				let fee = await instance.quizFee.call();
@@ -25,7 +25,7 @@ contract("Quiz", accounts => {
 		describe("Fail case", () => {
 			it("should revert on invalid from address", async () => {
 				try {
-					const instance = await Quiz.new(5,60,60,10,secret,key, {
+					const instance = await Quiz.new(5,60,60,60,10,secret ,{
 						from: "lol"
 					});
 					assert.fail(
@@ -41,7 +41,7 @@ contract("Quiz", accounts => {
 		let instance;
 
 		beforeEach(async () => {
-			instance = await Quiz.new(5,5,5,10,secret,key, { from: owner });
+			instance = await Quiz.new(5,3,3,3,10,secret, { from: owner });
 		});
 
 		describe("Success Case", () => {
@@ -121,7 +121,7 @@ contract("Quiz", accounts => {
 		describe("Fail Case", () => {
 			it("Time up for registering quiz", async () => {
 				const delay = ms => new Promise(res => setTimeout(res, ms));
-				await delay(6*1000);
+				await delay(4*1000);
 				try {
 						await instance.joinQuiz({
 							from: accounts[1],value : web3.toWei(10, "wei")
@@ -139,7 +139,7 @@ contract("Quiz", accounts => {
 		let instance;
 
 		beforeEach(async () => {
-			instance = await Quiz.new(5,5,5,10,secret,key, { from: owner });
+			instance = await Quiz.new(5,3,3,3,10,secret, { from: owner });
 			await instance.joinQuiz({
 					from: accounts[1],value : web3.toWei(10, "wei")
 				});
@@ -148,7 +148,9 @@ contract("Quiz", accounts => {
 		describe("Success Case", () => {
 			it("Quiz submitted", async () => {
 				const delay = ms => new Promise(res => setTimeout(res, ms));
-				await delay(6*1000);
+				await delay(4*1000);
+				await instance.revealQuestions([1,2,3,4],{from:owner});
+				await delay(3*1000);
 				let ques = await instance.startQuiz({from:accounts[1]});
 				await instance.endQuiz([1,2,3,4],{
 					from: accounts[1]
@@ -159,9 +161,11 @@ contract("Quiz", accounts => {
 		describe("Fail Case", () => {
 			it("Time up for submitting quiz", async () => {
 				const delay = ms => new Promise(res => setTimeout(res, ms));
-				await delay(6*1000);
+				await delay(4*1000);
+				await instance.revealQuestions([1,2,3,4],{from:owner});
+				await delay(3*1000);
 				let ques = await instance.startQuiz({from:accounts[1]});
-				await delay(5*1000);
+				await delay(3*1000);
 				try {
 						await instance.endQuiz([1,2,3,4],{
 							from: accounts[1]
@@ -179,7 +183,7 @@ contract("Quiz", accounts => {
 		let instance;
 
 		beforeEach(async () => {
-			instance = await Quiz.new(5,5,5,10,secret,key, { from: owner });
+			instance = await Quiz.new(5,3,3,3,10,secret, { from: owner });
 			await instance.joinQuiz({
 					from: accounts[1],value : web3.toWei(10, "wei")
 				});
@@ -187,8 +191,10 @@ contract("Quiz", accounts => {
 					from: accounts[2],value : web3.toWei(10, "wei")
 				});
 			 const delay = ms => new Promise(res => setTimeout(res, ms));
-			 await delay(6*1000);
-			let ques = await instance.startQuiz({from:accounts[1]});
+			 await delay(4*1000);
+			 await instance.revealQuestions([1,2,3,4],{from:owner});
+			 await delay(3*1000);
+			 let ques = await instance.startQuiz({from:accounts[1]});
 			 await instance.endQuiz([1,2,4,3],{
 					from: accounts[1]
 				});
@@ -201,7 +207,7 @@ contract("Quiz", accounts => {
 			it("winner determined from owner", async () => {
 			 	
 			 	const delay = ms => new Promise(res => setTimeout(res, ms));
-				await delay(5*1000);
+				await delay(3*1000);
 
 				let tx = await instance.getWinners({
 					from: owner
@@ -217,7 +223,7 @@ contract("Quiz", accounts => {
 		describe("Fail Case", () => {
 			it("owner should determine winners", async () => {
 				const delay = ms => new Promise(res => setTimeout(res, ms));
-				await delay(5*1000);
+				await delay(3*1000);
 				try {
 					await instance.getWinners({
 					from: accounts[1]
