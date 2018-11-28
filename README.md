@@ -31,21 +31,21 @@ Other Details
 ● Testing Platform : Truffle
 ● Assignment Deadline : 31 October, 8:29 AM
 
-## Step 1: Install deps
+### Step 1: Install deps
 ```
 $ npm install
 ```
-## Step 2: Build Contracts
+### Step 2: Build Contracts
 ```
 $ truffle compile
 ```
-## Step 4: Migrate Contracts
+### Step 4: Migrate Contracts
 ```
 $ truffle develop
 
 truffle(develop)> migrate --reset
 ```
-## Step 5: Run Tests
+### Step 5: Run Tests
 ```
 truffle(develop)> test
 ```
